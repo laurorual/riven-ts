@@ -78,7 +78,6 @@ it("returns watchlist content", async ({
   });
 });
 
-
 it("handles an empty watchlist when Plex omits Metadata", async ({
   dataSourceMap,
   plugin,
