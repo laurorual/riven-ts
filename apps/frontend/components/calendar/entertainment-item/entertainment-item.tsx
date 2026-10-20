@@ -3,9 +3,9 @@ import { Film, Tv } from "lucide-react";
 import Link from "next/link";
 import { z } from "zod";
 
-import { getTypeStyle } from "../utilities/get-type-style";
+import { getTypeStyle } from "#components/calendar/utilities/get-type-style.ts";
 
-import type { EntertainmentItemData } from "../types";
+import type { EntertainmentItemData } from "#components/calendar/types.d.ts";
 
 function formatEpisodeLabel({ season, episode }: EntertainmentItemData) {
   if (!season) {
@@ -26,7 +26,7 @@ function itemUrl(item: EntertainmentItemData) {
       }
 
       if (item.tvdbId) {
-        return `/details/media/${item.itemType}/${item.tvdbId}?indexer=tvdb` as const;
+        return `/details/media/${item.itemType}/${item.tvdbId}` as const;
       }
 
       break;
@@ -36,7 +36,7 @@ function itemUrl(item: EntertainmentItemData) {
     case "episode": {
       // For TV items, prefer TVDB ID to skip TMDB→TVDB resolution
       if (item.tvdbId) {
-        return `/details/media/${item.itemType}/${item.tvdbId}/?indexer=tvdb` as const;
+        return `/details/media/${item.itemType}/${item.tvdbId}` as const;
       }
 
       if (item.tmdbId) {

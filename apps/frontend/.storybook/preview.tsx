@@ -1,10 +1,6 @@
 import "./types.d.ts";
-import "@/lib/styles/themes/all.css";
-import "@/lib/styles/globals.css";
-import { i18n } from "@/.storybook/i18n";
-import { fontMono, fontSansSerif, fontSerif } from "@/app/fonts";
-import { Providers } from "@/components/providers";
-
+import "#lib/styles/themes/all.css";
+import "#lib/styles/globals.css";
 import { resetApolloClientSingletons } from "@apollo/client-integration-nextjs";
 import addonA11y from "@storybook/addon-a11y";
 import addonDocs from "@storybook/addon-docs";
@@ -14,20 +10,49 @@ import { headers } from "@storybook/nextjs-vite/headers.mock";
 import mswAddon from "msw-storybook-addon";
 import { Suspense, useLayoutEffect } from "react";
 import { toast } from "sonner";
+import addonVis from "storybook-addon-vis";
 import { expect, sb } from "storybook/test";
 import { themes } from "storybook/theming";
 
-import { WithI18n } from "./decorators/with-i18n";
+import { i18n } from "#.storybook/i18n.ts";
+import { fontMono, fontSansSerif, fontSerif } from "#app/fonts.ts";
+import { Providers } from "#components/providers.tsx";
+
+import { WithI18n } from "./decorators/with-i18n.tsx";
 import { WithReducedMotionCheck } from "./decorators/with-reduced-motion-check.tsx";
+import { normaliseEnvironment } from "./test-utils/normalise-environment.ts";
+import {
+  prepareAutoSnapshot,
+  resetAutoSnapshot,
+  trackPendingRequests,
+} from "./test-utils/visual-testing.ts";
 
-import type { ScreenshotParameters } from "@storycap-testrun/browser";
+import type { resetClient } from "#lib/graphql/__mocks__/client.ts";
+import type { SnapshotParameters } from "./test-utils/visual-testing.ts";
 
+// Storybook resolves mock paths with Node's require.resolve from its own package, so subpath imports don't work here
 sb.mock(import("../lib/graphql/client.ts"));
 sb.mock(import("next/cache"));
 
+/**
+ * Gives the mocked GraphQL client a fresh cache, so data doesn't leak between stories.
+ *
+ * The mock is served in place of the real module, so it must be imported via the real path to share its instance.
+ */
+const resetMockGraphqlClient = async () => {
+  const mockGraphqlClient =
+    (await import("#lib/graphql/client.ts")) as unknown as {
+      resetClient: typeof resetClient;
+    };
+
+  mockGraphqlClient.resetClient();
+};
+
+normaliseEnvironment();
+
 declare module "@storybook/nextjs-vite" {
   interface Parameters {
-    screenshot?: ScreenshotParameters;
+    snapshot?: SnapshotParameters;
   }
 }
 
@@ -62,8 +87,17 @@ declare module "storybook/internal/csf" {
 }
 
 export const preview = definePreview({
-  tags: ["autodocs"],
-  addons: [addonA11y(), addonDocs(), addonVitest(), mswAddon()],
+  tags: ["autodocs", "snapshot"],
+  addons: [
+    addonA11y(),
+    addonDocs(),
+    addonVitest(),
+    mswAddon(),
+    addonVis({
+      auto: prepareAutoSnapshot,
+      createMissingBaseline: !import.meta.env.CI,
+    }),
+  ],
   parameters: {
     i18n,
     controls: {
@@ -132,8 +166,14 @@ export const preview = definePreview({
       );
     },
   ],
-  beforeEach({ globals }) {
-    resetApolloClientSingletons(); // Clear Apollo Client cache to prevent stale data between stories
+  async beforeEach({ globals, msw }) {
+    resetAutoSnapshot();
+    trackPendingRequests(msw);
+
+    // Clear the Apollo Client caches to prevent stale data between stories
+    resetApolloClientSingletons();
+    await resetMockGraphqlClient();
+
     toast.dismiss();
 
     headers().append("accept-language", globals.locale);

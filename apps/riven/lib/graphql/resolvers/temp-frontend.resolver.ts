@@ -1,14 +1,12 @@
-import {
-  MediaItem,
-  Show,
-  MediaEntry,
-} from "@repo/util-plugin-sdk/dto/entities";
+import { MediaItem, MediaEntry } from "@repo/util-plugin-sdk/dto/entities";
 import { MediaItemState } from "@repo/util-plugin-sdk/dto/enums/media-item-state.enum";
 import { MediaItemType } from "@repo/util-plugin-sdk/dto/enums/media-item-type.enum";
 import { TopLevelMediaItemType } from "@repo/util-plugin-sdk/dto/enums/top-level-media-item-type.enum";
+import { CastMember } from "@repo/util-plugin-sdk/dto/types/cast-member.type";
 import { Genre } from "@repo/util-plugin-sdk/dto/types/genre.type";
-import { IndexerData } from "@repo/util-plugin-sdk/dto/types/indexer-data.type";
 import { MediaMetadata } from "@repo/util-plugin-sdk/dto/types/media-metadata.type";
+import { Trailer } from "@repo/util-plugin-sdk/dto/types/trailer.type";
+import { MediaItemUnion } from "@repo/util-plugin-sdk/dto/unions/media-item.union";
 
 import {
   Arg,
@@ -19,21 +17,6 @@ import {
   Query,
   Resolver,
 } from "type-graphql";
-
-@ObjectType()
-class CastMember {
-  @Field(() => ID)
-  public id!: string;
-
-  @Field()
-  public name!: string;
-
-  @Field()
-  public character!: string;
-
-  @Field({ nullable: true })
-  public profilePath?: string;
-}
 
 @ObjectType()
 class InstanceStatus {
@@ -57,24 +40,6 @@ class AuthProvider {
 
   @Field({ nullable: true })
   public name?: string;
-}
-
-@ObjectType()
-class Trailer {
-  @Field(() => ID)
-  public id!: string;
-
-  @Field()
-  public name!: string;
-
-  @Field()
-  public site!: string;
-
-  @Field()
-  public key!: string;
-
-  @Field()
-  public url!: string;
 }
 
 @ObjectType()
@@ -214,7 +179,7 @@ class NowPlayingItem {
 
 @Resolver()
 export class TempFrontendResolver {
-  @Query(() => [MediaItem])
+  @Query(() => [MediaItemUnion])
   public recentlyAdded() {
     return [];
   }
@@ -224,21 +189,9 @@ export class TempFrontendResolver {
     return [];
   }
 
-  @Query(() => [Show])
-  public tvdbTrendingShows(
-    @Arg("timeWindow", () => String) _timeWindow: string,
-  ) {
-    return [];
-  }
-
   @Query(() => MediaDetails)
   public mediaDetails(@Arg("id", () => ID) _id: string) {
     return {};
-  }
-
-  @Query(() => [IndexerData])
-  public discoveryItems() {
-    return [];
   }
 
   @Query(() => [AuthProvider])

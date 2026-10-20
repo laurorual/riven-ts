@@ -1,16 +1,15 @@
-import { preview } from "@/.storybook/preview";
-
 import { DateTime } from "luxon";
-import { graphql, HttpResponse } from "msw";
+import { HttpResponse } from "msw";
 import { expect, within } from "storybook/test";
 
-import { GET_RECENTLY_ADDED } from "./_components/recently-added";
-import { GET_TMDB_NOW_PLAYING } from "./_components/tmdb-now-playing/_queries/get-tmdb-now-playing.query";
-import { GET_TMDB_TRENDING_MOVIES } from "./_components/tmdb-trending-movies/_queries/get-tmdb-trending-movies";
-import { GET_TVDB_TRENDING_SHOWS } from "./_components/tvdb-trending-shows/_queries/get-tvdb-trending-shows";
-import HomePage from "./page";
+import { preview } from "#.storybook/preview.tsx";
+import { api } from "#mocks/graphql.ts";
 
-import type { UUID } from "node:crypto";
+import { GET_RECENTLY_ADDED } from "./_components/recently-added.tsx";
+import { GET_TMDB_NOW_PLAYING } from "./_components/tmdb-now-playing/_queries/get-tmdb-now-playing.query.ts";
+import { GET_TMDB_TRENDING_MOVIES } from "./_components/tmdb-trending-movies/_queries/get-tmdb-trending-movies.ts";
+import { GET_TMDB_TRENDING_SHOWS } from "./_components/tmdb-trending-shows/_queries/get-tmdb-trending-shows.ts";
+import HomePage from "./page.tsx";
 
 const meta = preview.meta({
   title: "Pages / Home",
@@ -23,13 +22,13 @@ const meta = preview.meta({
 export const Default = meta.story({
   beforeEach({ msw }) {
     msw.use(
-      graphql.query(GET_TMDB_NOW_PLAYING, () =>
+      api.query(GET_TMDB_NOW_PLAYING, () =>
         HttpResponse.json({
           data: {
             tmdbNowPlaying: [
               {
                 __typename: "TmdbIndexerData",
-                id: crypto.randomUUID() as UUID,
+                id: crypto.randomUUID(),
                 type: "movie",
                 title: "John Wick: Chapter 4",
                 backdropUrl:
@@ -42,12 +41,12 @@ export const Default = meta.story({
                 genres: [
                   {
                     __typename: "Genre",
-                    id: crypto.randomUUID() as UUID,
+                    id: crypto.randomUUID(),
                     name: "Action",
                   },
                   {
                     __typename: "Genre",
-                    id: crypto.randomUUID() as UUID,
+                    id: crypto.randomUUID(),
                     name: "Thriller",
                   },
                 ],
@@ -73,12 +72,17 @@ export const Default = meta.story({
                     url: "https://www.themoviedb.org/movie/603692-john-wick-chapter-4",
                   },
                 },
-                logoUrl:
-                  "https://image.tmdb.org/t/p/original/24dIhRKjLnYRanA2Mo0ycZfObUp.png",
+                logo: {
+                  __typename: "ItemImage",
+                  aspectRatio: 2 / 3,
+                  height: 600,
+                  width: 400,
+                  url: "https://image.tmdb.org/t/p/original/24dIhRKjLnYRanA2Mo0ycZfObUp.png",
+                },
               },
               {
                 __typename: "TmdbIndexerData",
-                id: crypto.randomUUID() as UUID,
+                id: crypto.randomUUID(),
                 type: "show",
                 title: "Arcane",
                 backdropUrl:
@@ -91,12 +95,12 @@ export const Default = meta.story({
                 genres: [
                   {
                     __typename: "Genre",
-                    id: crypto.randomUUID() as UUID,
+                    id: crypto.randomUUID(),
                     name: "Animation",
                   },
                   {
                     __typename: "Genre",
-                    id: crypto.randomUUID() as UUID,
+                    id: crypto.randomUUID(),
                     name: "Action & Adventure",
                   },
                 ],
@@ -107,12 +111,17 @@ export const Default = meta.story({
                   rottenTomatoes: null,
                   tmdb: null,
                 },
-                logoUrl:
-                  "https://image.tmdb.org/t/p/original/jXLNOzeEA8AoJy92dJTUUZXTMxK.png",
+                logo: {
+                  __typename: "ItemImage",
+                  aspectRatio: 2 / 3,
+                  height: 600,
+                  width: 400,
+                  url: "https://image.tmdb.org/t/p/original/jXLNOzeEA8AoJy92dJTUUZXTMxK.png",
+                },
               },
               {
                 __typename: "TmdbIndexerData",
-                id: crypto.randomUUID() as UUID,
+                id: crypto.randomUUID(),
                 type: "movie",
                 title: "Insidious: Out of the Further",
                 backdropUrl:
@@ -129,7 +138,7 @@ export const Default = meta.story({
                 genres: [
                   {
                     __typename: "Genre",
-                    id: crypto.randomUUID() as UUID,
+                    id: crypto.randomUUID(),
                     name: "Horror",
                   },
                 ],
@@ -140,21 +149,26 @@ export const Default = meta.story({
                   rottenTomatoes: null,
                   tmdb: null,
                 },
-                logoUrl:
-                  "https://image.tmdb.org/t/p/original/iGjbP4jYzzbINDtd9kScypQOlmw.png",
+                logo: {
+                  __typename: "ItemImage",
+                  aspectRatio: 2 / 3,
+                  height: 600,
+                  width: 400,
+                  url: "https://image.tmdb.org/t/p/original/iGjbP4jYzzbINDtd9kScypQOlmw.png",
+                },
               },
             ],
           },
         }),
       ),
-      graphql.query(GET_TMDB_TRENDING_MOVIES, ({ variables }) => {
+      api.query(GET_TMDB_TRENDING_MOVIES, ({ variables }) => {
         if (variables.timeWindow === "day") {
           return HttpResponse.json({
             data: {
               tmdbTrendingMovies: [
                 {
                   __typename: "TmdbIndexerData",
-                  id: crypto.randomUUID() as UUID,
+                  id: crypto.randomUUID(),
                   type: "movie",
                   title: "Avengers: Endgame",
                   posterUrl:
@@ -171,7 +185,7 @@ export const Default = meta.story({
             tmdbTrendingMovies: [
               {
                 __typename: "TmdbIndexerData",
-                id: crypto.randomUUID() as UUID,
+                id: crypto.randomUUID(),
                 type: "movie",
                 title: "The Odyssey",
                 posterUrl:
@@ -182,19 +196,20 @@ export const Default = meta.story({
           },
         });
       }),
-      graphql.query(GET_TVDB_TRENDING_SHOWS, ({ variables }) => {
+      api.query(GET_TMDB_TRENDING_SHOWS, ({ variables }) => {
         if (variables.timeWindow === "day") {
           return HttpResponse.json({
             data: {
-              tvdbTrendingShows: [
+              tmdbTrendingShows: [
                 {
-                  __typename: "Show",
-                  id: crypto.randomUUID() as UUID,
+                  __typename: "TmdbIndexerData",
+                  id: crypto.randomUUID(),
                   type: "show",
                   title: "Breaking Bad",
-                  posterPath:
+                  posterUrl:
                     "https://artworks.thetvdb.com/banners/posters/81189-10.jpg",
                   year: 2008,
+                  isRequestable: true,
                 },
               ],
             },
@@ -203,21 +218,22 @@ export const Default = meta.story({
 
         return HttpResponse.json({
           data: {
-            tvdbTrendingShows: [
+            tmdbTrendingShows: [
               {
-                __typename: "Show",
-                id: crypto.randomUUID() as UUID,
+                __typename: "TmdbIndexerData",
+                id: crypto.randomUUID(),
                 type: "show",
                 title: "Arcane",
-                posterPath:
+                posterUrl:
                   "https://artworks.thetvdb.com/banners/v4/series/371028/posters/617f6a8c59e8f.jpg",
                 year: 2024,
+                isRequestable: true,
               },
             ],
           },
         });
       }),
-      graphql.query(GET_RECENTLY_ADDED, () =>
+      api.query(GET_RECENTLY_ADDED, () =>
         HttpResponse.json({
           data: {
             recentlyAdded: [],
@@ -321,7 +337,7 @@ Default.test(
 export const WithRecentlyAdded = Default.extend({
   beforeEach({ msw }) {
     msw.use(
-      graphql.query(GET_RECENTLY_ADDED, () =>
+      api.query(GET_RECENTLY_ADDED, () =>
         HttpResponse.json({
           data: {
             recentlyAdded: [

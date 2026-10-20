@@ -1,7 +1,5 @@
 "use client";
 
-import { privateEnvironment } from "@/environment/private-environment.schema";
-
 import { HttpLink } from "@apollo/client";
 import {
   ApolloNextAppProvider,
@@ -9,13 +7,25 @@ import {
   InMemoryCache,
 } from "@apollo/client-integration-nextjs";
 
+import { privateEnvironment } from "#environment/private-environment.schema.ts";
+
 function makeClient() {
   const httpLink = new HttpLink({
     uri: `${privateEnvironment.BACKEND_URL}/graphql`,
   });
 
   return new ApolloClient({
-    cache: new InMemoryCache(),
+    cache: new InMemoryCache({
+      possibleTypes: {
+        MediaItem: ["Movie", "Show", "Season", "Episode"],
+        ShowLikeMediaItem: ["Show", "Season", "Episode"],
+      },
+      typePolicies: {
+        TmdbIndexerData: {
+          keyFields: ["type", "id"],
+        },
+      },
+    }),
     link: httpLink,
   });
 }

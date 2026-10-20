@@ -20,7 +20,11 @@
       ]
     },
     "codegen:gql": {
-      "dependsOn": ["@repo/riven#codegen:gql-schema"]
+      "dependsOn": ["@repo/riven#codegen:gql-schema"],
+      "outputs": [
+        "./app/_types/__generated__/graphql.ts",
+        "./app/**/*.typegen.ts"
+      ]
     },
     "codegen:gql:watch": {
       "dependsOn": ["@repo/riven#codegen:gql-schema"],
@@ -59,8 +63,7 @@
         "!**/*.typegen.ts",
         "!**/next-env.d.ts",
         "!**/public/mockServiceWorker.js"
-      ],
-      "outputs": ["__screenshots__"]
+      ]
     },
     "test:component": {
       "inputs": [
@@ -79,7 +82,7 @@
         "!**/next-env.d.ts",
         "!**/public/mockServiceWorker.js"
       ],
-      "outputs": ["__screenshots__"]
+      "dependsOn": ["^build"]
     }
   }
 }

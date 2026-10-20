@@ -1,14 +1,14 @@
 import { cn } from "cn";
 
-import { fly } from "../_animations/fly";
+import { fly } from "#components/_animations/fly.ts";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "../_ui/carousel";
-import { ListItem } from "../list-item/list-item";
+} from "#components/_ui/carousel.tsx";
+import { ListItem } from "#components/list-item/list-item.tsx";
 
 import type { ComponentProps } from "react";
 
@@ -45,6 +45,7 @@ export function ListCarousel({
               mediaItem={item}
               indexer={indexer}
               className="w-36 md:w-44 lg:w-48"
+              href={`/details/media/${item.type}/${item.id}`}
             />
           </CarouselItem>
         ))}

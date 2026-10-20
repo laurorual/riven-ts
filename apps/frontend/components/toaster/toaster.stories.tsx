@@ -1,16 +1,16 @@
-import { preview } from "@/.storybook/preview";
-
 import { toast } from "sonner";
 
-import { Button } from "../_ui/button";
-import { Toaster } from "./toaster";
+import { preview } from "#.storybook/preview.tsx";
+import { Button } from "#components/_ui/button.tsx";
+
+import { Toaster } from "./toaster.tsx";
 
 const meta = preview.meta({
   title: "Components / Toaster",
   component: Toaster,
   parameters: {
-    screenshot: {
-      skip: true,
+    snapshot: {
+      enabled: false,
     },
   },
 });

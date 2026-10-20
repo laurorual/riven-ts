@@ -1,16 +1,18 @@
-import { authClient } from "@/lib/auth/client";
+"use client";
 
 import {
   createContext,
   startTransition,
+  use,
   useCallback,
-  useContext,
   useMemo,
   useRef,
   useState,
 } from "react";
 import { useUnmount } from "react-use";
 import { toast } from "sonner";
+
+import { authClient } from "#lib/auth/client.ts";
 
 import type { Passkey } from "@better-auth/passkey/client";
 import type { PropsWithChildren } from "react";
@@ -157,7 +159,7 @@ export function PasskeyFormProvider({ children }: PropsWithChildren) {
 }
 
 export function usePasskeyForm() {
-  const context = useContext(PasskeyFormContext);
+  const context = use(PasskeyFormContext);
 
   if (!context) {
     throw new Error("usePasskeyForm must be used within a PasskeyFormProvider");

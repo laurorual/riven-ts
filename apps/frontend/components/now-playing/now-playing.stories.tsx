@@ -1,11 +1,11 @@
-import { preview } from "@/.storybook/preview";
-
 import { expect, waitFor } from "storybook/test";
 
-import { NowPlaying } from "./now-playing";
-import { NowPlayingSkeleton } from "./now-playing-skeleton";
+import { preview } from "#.storybook/preview.tsx";
 
-import type { IndexerData } from "@/app/_types/__generated__/graphql";
+import { NowPlayingSkeleton } from "./now-playing-skeleton.tsx";
+import { NowPlaying } from "./now-playing.tsx";
+
+import type { IndexerData } from "#app/_types/__generated__/graphql.ts";
 
 const meta = preview.meta({
   title: "Components / NowPlaying",
@@ -14,7 +14,7 @@ const meta = preview.meta({
     NowPlayingSkeleton,
   },
   args: {
-    autoplayDelay: 5000,
+    autoplayDelay: 30_000,
     data: [
       {
         id: "603692",
@@ -44,7 +44,9 @@ const meta = preview.meta({
             url: "https://www.rottentomatoes.com/m/john_wick_chapter_4",
           },
         },
-        logoUrl: null,
+        logo: null,
+        status: "released",
+        isRequestable: true,
       },
       {
         id: "94605",
@@ -63,7 +65,9 @@ const meta = preview.meta({
         ],
         certification: "12A",
         ratings: {},
-        logoUrl: null,
+        logo: null,
+        status: "released",
+        isRequestable: true,
       },
       {
         id: "1291595",
@@ -79,14 +83,11 @@ const meta = preview.meta({
         genres: [{ id: "horror", name: "Horror" }],
         certification: "18",
         ratings: {},
-        logoUrl: null,
+        logo: null,
+        status: "released",
+        isRequestable: true,
       },
     ] satisfies IndexerData[],
-  },
-  parameters: {
-    screenshot: {
-      delay: 2500, // Half way between autoplay transitions to prevent taking screenshots mid-switch
-    },
   },
 });
 
@@ -94,13 +95,6 @@ export const Default = meta.story();
 
 Default.test(
   "Navigates to the next slide when the next button is clicked",
-  {
-    parameters: {
-      screenshot: {
-        skip: true,
-      },
-    },
-  },
   async ({ canvas, userEvent, step }) => {
     const firstSlideTitle = await canvas.findByRole("heading", {
       name: /john wick: chapter 4/iu,
@@ -134,13 +128,6 @@ Default.test(
 
 Default.test(
   "Navigates to the previous slide when the previous button is clicked",
-  {
-    parameters: {
-      screenshot: {
-        skip: true,
-      },
-    },
-  },
   async ({ canvas, userEvent, step }) => {
     const firstSlideTitle = await canvas.findByRole("heading", {
       name: /john wick: chapter 4/iu,
@@ -181,8 +168,8 @@ Default.test(
       autoplayDelay: 1000,
     },
     parameters: {
-      screenshot: {
-        skip: true,
+      snapshot: {
+        enabled: false,
       },
     },
   },
@@ -231,8 +218,8 @@ Default.test(
       autoplayDelay: 1000,
     },
     parameters: {
-      screenshot: {
-        skip: true,
+      snapshot: {
+        enabled: false,
       },
     },
   },
@@ -264,8 +251,8 @@ Default.test(
       autoplayDelay: 5000,
     },
     parameters: {
-      screenshot: {
-        skip: true,
+      snapshot: {
+        enabled: false,
       },
     },
   },
@@ -341,7 +328,9 @@ export const WithLongTitle = meta.story({
         ],
         certification: "R",
         ratings: {},
-        logoUrl: null,
+        logo: null,
+        status: "released",
+        isRequestable: true,
       },
       {
         id: "1291593",
@@ -362,7 +351,9 @@ export const WithLongTitle = meta.story({
         ],
         certification: "R",
         ratings: {},
-        logoUrl: null,
+        logo: null,
+        status: "released",
+        isRequestable: true,
       },
       {
         id: "1291595",
@@ -378,7 +369,9 @@ export const WithLongTitle = meta.story({
         genres: [{ id: "horror", name: "Horror" }],
         certification: "18",
         ratings: {},
-        logoUrl: null,
+        logo: null,
+        status: "released",
+        isRequestable: true,
       },
     ],
   },
@@ -415,8 +408,14 @@ export const WithLogos = meta.story({
             url: "https://www.rottentomatoes.com/m/john_wick_chapter_4",
           },
         },
-        logoUrl:
-          "https://image.tmdb.org/t/p/original/24dIhRKjLnYRanA2Mo0ycZfObUp.png",
+        logo: {
+          url: "https://image.tmdb.org/t/p/original/24dIhRKjLnYRanA2Mo0ycZfObUp.png",
+          aspectRatio: 1.5,
+          height: 200,
+          width: 300,
+        },
+        status: "released",
+        isRequestable: true,
       },
       {
         id: "94605",
@@ -435,8 +434,14 @@ export const WithLogos = meta.story({
         ],
         certification: "12A",
         ratings: {},
-        logoUrl:
-          "https://image.tmdb.org/t/p/original/jXLNOzeEA8AoJy92dJTUUZXTMxK.png",
+        logo: {
+          url: "https://image.tmdb.org/t/p/original/jXLNOzeEA8AoJy92dJTUUZXTMxK.png",
+          aspectRatio: 1.5,
+          height: 200,
+          width: 300,
+        },
+        status: "released",
+        isRequestable: true,
       },
       {
         id: "1291595",
@@ -452,8 +457,14 @@ export const WithLogos = meta.story({
         genres: [{ id: "horror", name: "Horror" }],
         certification: "18",
         ratings: {},
-        logoUrl:
-          "https://image.tmdb.org/t/p/original/iGjbP4jYzzbINDtd9kScypQOlmw.png",
+        logo: {
+          url: "https://image.tmdb.org/t/p/original/iGjbP4jYzzbINDtd9kScypQOlmw.png",
+          aspectRatio: 1.5,
+          height: 200,
+          width: 300,
+        },
+        status: "released",
+        isRequestable: true,
       },
     ],
   },
